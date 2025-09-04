@@ -1,11 +1,16 @@
 import dayjs from "dayjs"
 import { openingHours } from "../../utils/opening-hours.js"
 import { hoursClick } from "../form/hours-click.js"
+import { scheduleFetchByDay } from "../../services/schedule-fetch-by-day.js"
 
 const hoursSchedule = document.getElementById("hours")
 const date = document.getElementById("date")
 
-export function showSchedulesToday (){
+export async function showSchedulesToday (){
+
+    const unavailableHours = await scheduleFetchByDay(date.value)
+
+    console.log(unavailableHours)
 
     // Limpa a lista de horários
     hoursSchedule.innerHTML = ("")
@@ -15,8 +20,9 @@ export function showSchedulesToday (){
         // Remove a formatação da hora
         const [hour] = hourF.split(":")
         
-        // Verifica se a hora já passou
+        // Verifica se a hora já passou e se está marcada
         const isAvailable = dayjs(date.value).set("hour", hour).isAfter(dayjs(new Date()))
+
         
         return {
             hour: hourF,

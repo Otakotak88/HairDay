@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import { clientInfo } from "./client-info.js"
+import { scheduleNew } from "../../services/schedule-new.js"
 
 // Formulário
 const form = document.querySelector("form")
@@ -37,7 +37,16 @@ form.addEventListener("submit", (event) => {
             throw new Error("Horário de agendamento necessário")
         }
 
-        clientInfo(name, date)
+        
+        const id = new Date().getTime()
+
+        const newScheduleInfo = {
+            name,
+            date,
+            id
+        }
+        
+        scheduleNew( newScheduleInfo )
 
     } catch(error){
 
