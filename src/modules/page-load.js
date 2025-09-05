@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { showSchedulesToday } from "./schedules/hours-load.js"
-
-const date = document.getElementById("date")
-
-addEventListener("DOMContentLoaded", () => {
-
-    showSchedulesToday()
-})
-
-date.onchange = () => showSchedulesToday()
-=======
 import dayjs from "dayjs"
 import { hoursLoad } from "./schedules/hours-load.js"
 import { scheduleFetchByDay } from "../servicesAPI/schedule-fetch-by-date";
@@ -34,4 +22,3 @@ date.addEventListener("change", async () => {
 
     hoursLoad({valueDate, scheduleFetched})
 })
->>>>>>> dce2434
