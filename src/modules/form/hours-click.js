@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export function hoursClick(){
     const hoursAvailable = document.querySelectorAll(".hour-available")
 
@@ -13,6 +14,19 @@ export function hoursClick(){
 
             // Adiciona a classe no botão clicado
             hourBTN.classList.add("hour-selected")
+=======
+
+
+export function hoursClick(){
+    const hoursAvailable = document.querySelectorAll(".hour-available")
+    
+    hoursAvailable.forEach(hour => {
+        hour.addEventListener("click", () => {
+            hoursAvailable.forEach(hour => {
+                hour.classList.remove("hour-selected")
+            })
+            hour.classList.add("hour-selected")
+>>>>>>> dce2434
         })
     })
 }

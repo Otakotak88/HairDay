@@ -1,65 +1,63 @@
-import dayjs from "dayjs"
-import { openingHours } from "../../utils/opening-hours.js"
-import { hoursClick } from "../form/hours-click.js"
-import { scheduleFetchByDay } from "../../services/schedule-fetch-by-day.js"
+import dayjs from "dayjs";
+import { hoursAvailable } from "../../utils/hours-available"
+import { hoursClick } from "../form/hours-click";
 
-const hoursSchedule = document.getElementById("hours")
-const date = document.getElementById("date")
+const hoursForm = document.getElementById("hours")
 
-export async function showSchedulesToday (){
-
-    const unavailableHours = await scheduleFetchByDay(date.value)
-
-    console.log(unavailableHours)
-
-    // Limpa a lista de horários
-    hoursSchedule.innerHTML = ("")
-
-    const opening = openingHours.map((hourF) => {
-
-        // Remove a formatação da hora
-        const [hour] = hourF.split(":")
-        
-        // Verifica se a hora já passou e se está marcada
-        const isAvailable = dayjs(date.value).set("hour", hour).isAfter(dayjs(new Date()))
-
-        
-        return {
-            hour: hourF,
-            available: isAvailable
-        }
-    })
+export function hoursLoad({valueDate, scheduleFetched = []}){
     
-    opening.forEach(hourOBJ => {
-        // Cria uma nova li e define sua classe como "hour"
-        const hourBTN = document.createElement("li")
-        hourBTN.textContent = hourOBJ.hour
-        hourBTN.classList.add("hour")
-        hourBTN.classList.add(hourOBJ.available ? "hour-available" : "hour-unavailable")
+    hoursForm.textContent = ""
 
-        // Quando a hora for 9 adiciona a label "Manhã"
-        if(hourOBJ.hour === "9:00"){
-            const datePeriod = document.createElement("li")
-            datePeriod.classList.add("hour-period")
-            datePeriod.textContent = "Manhã"
-            hoursSchedule.append(datePeriod)
-        } 
-        // Quando a hora for 13 adiciona a label "Tarde"
-        else if(hourOBJ.hour === "13:00"){
-            const datePeriod = document.createElement("li")
-            datePeriod.classList.add("hour-period")
-            datePeriod.textContent = "Tarde"
-            hoursSchedule.append(datePeriod)
-        } 
-        // Quando a hora for 19 adiciona a label "Noite"
-        else if(hourOBJ.hour === "19:00"){
-            const datePeriod = document.createElement("li")
-            datePeriod.classList.add("hour-period")
-            datePeriod.textContent = "Noite"
-            hoursSchedule.append(datePeriod)
+    const unavailableHours = scheduleFetched.map(schedule => dayjs(schedule.date).format("HH:mm"))
+
+    const opening = hoursAvailable.map(hour => {
+        const [hourF] = hour.split(":")
+        
+        const isHourPast = dayjs(valueDate).add(hourF, "hour").isBefore(dayjs())
+
+        const isHourOccupied = !unavailableHours.includes(hour)
+        
+        const isAvailable = !isHourPast && isHourOccupied
+
+        return{
+            hour,
+            isAvailable
         }
-        hoursSchedule.append(hourBTN)
+
+        
+    })
+    opening.forEach(({hour, isAvailable}) => {
+        const item = document.createElement("li")
+        const [hourF] = hour.split(":")
+
+        item.classList.add("hour")
+        item.classList.add(isAvailable? "hour-available" : "hour-unavailable")
+        item.textContent = hour
+
+
+        if(hourF === "9"){
+            const dataPeriod = document.createElement("li")
+            dataPeriod.classList.add("hour-period")
+            dataPeriod.textContent = "Manhã"
+
+            hoursForm.append(dataPeriod)
+        } else if(hourF === "13"){
+            const dataPeriod = document.createElement("li")
+            dataPeriod.classList.add("hour-period")
+            dataPeriod.textContent = "Tarde"
+
+            hoursForm.append(dataPeriod)
+        } else if(hourF === "19"){
+            const dataPeriod = document.createElement("li")
+            dataPeriod.classList.add("hour-period")
+            dataPeriod.textContent = "Noite"
+
+            hoursForm.append(dataPeriod)
+        }
+
+        hoursForm.append(item)
     })
 
     hoursClick()
+
 }
